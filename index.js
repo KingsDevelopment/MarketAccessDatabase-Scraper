@@ -9,6 +9,7 @@ const start = Date.now();
 (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    const empty = { country: '', code: '', eu: '', mfn: '' };
     // page.on('console', consoleObj => console.log(consoleObj.text()));
 
     let data = [];
@@ -19,8 +20,10 @@ const start = Date.now();
             const code = config.codes[j];
             console.log(`Running country ${country.name} with code ${code}`);
             const countryResult = await runCountry(page, code, country);
-            data = [...data, ...countryResult]
+            data = [...data, ...countryResult, empty]
         };
+
+        data = [...data, empty, empty];
     }
 
     createCsv(data);
@@ -40,7 +43,6 @@ const runCountry = async (puppeteer, code, country) => {
 
         const indexes = {
             code: false,
-            description: false,
             eu: false,
             mfn: false
         };
@@ -49,9 +51,6 @@ const runCountry = async (puppeteer, code, country) => {
             switch (ths[i].innerText.toLowerCase().trim()) {
                 case 'code':
                     indexes.code = i;
-                    break;
-                case 'product description':
-                    indexes.description = i;
                     break;
                 case 'eu':
                     indexes.eu = i;
@@ -68,7 +67,6 @@ const runCountry = async (puppeteer, code, country) => {
                 const tds = tableList[i].querySelectorAll('td');
                 rows.push({
                     code: indexes.code !== false ? tds[indexes.code].innerText : '',
-                    description: indexes.description !== false ? tds[indexes.description].innerText : '',
                     eu: indexes.eu !== false ? tds[indexes.eu].innerText : '',
                     mfn: indexes.mfn !== false ? tds[indexes.mfn].innerText : '',
                 });
