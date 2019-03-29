@@ -2,7 +2,6 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const { parse } = require('json2csv');
-
 const start = Date.now();
 
 try {
@@ -13,15 +12,9 @@ try {
 }
 
 (async () => {
-    const browser = await puppeteer.launch({
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox'
-        ]
-    });
+    const browser = await puppeteer.launch({ args: [ '--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     const empty = { country: '', code: '', eu: '', mfn: '' };
-    // page.on('console', consoleObj => console.log(consoleObj.text()));
 
     let data = [];
     for (let i = 0; i < config.countries.length; i++) {
