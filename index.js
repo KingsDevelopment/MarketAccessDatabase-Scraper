@@ -2,12 +2,23 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const { parse } = require('json2csv');
-const config = require('./config.json');
 
 const start = Date.now();
 
+try {
+    const config = require('./config.json');
+} catch(error) {
+    console.error("Please copy config.example.json to config.json and edit the necessary values.");
+    process.exit();
+}
+
 (async () => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]
+    });
     const page = await browser.newPage();
     const empty = { country: '', code: '', eu: '', mfn: '' };
     // page.on('console', consoleObj => console.log(consoleObj.text()));
